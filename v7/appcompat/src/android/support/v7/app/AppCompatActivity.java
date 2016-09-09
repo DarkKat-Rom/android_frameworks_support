@@ -68,25 +68,14 @@ public class AppCompatActivity extends FragmentActivity implements AppCompatCall
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        final AppCompatDelegate delegate = getDelegate();
-        delegate.installViewFactory();
-        delegate.onCreate(savedInstanceState);
-        if (delegate.applyDayNight() && mThemeId != 0) {
-            // If DayNight has been applied, we need to re-apply the theme for
-            // the changes to take effect. On API 23+, we should bypass
-            // setTheme(), which will no-op if the theme ID is identical to the
-            // current theme ID.
-            if (Build.VERSION.SDK_INT >= 23) {
-                onApplyThemeResource(getTheme(), mThemeId, false);
-            } else {
-                setTheme(mThemeId);
-            }
-        }
+        getDelegate().installViewFactory();
+        getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
     }
 
     @Override
-    public void setTheme(@StyleRes final int resid) {
+    public void setTheme(int resid) {
+        getDelegate().applyDayNight();
         super.setTheme(resid);
         // Keep hold of the theme id so that we can re-set it later if needed
         mThemeId = resid;
