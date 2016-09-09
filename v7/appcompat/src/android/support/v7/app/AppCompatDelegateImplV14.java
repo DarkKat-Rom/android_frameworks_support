@@ -16,10 +16,11 @@
 
 package android.support.v7.app;
 
+import android.app.UiModeManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Bundle;
+import android.os.Build;
 import android.support.v7.view.SupportActionModeWrapper;
 import android.util.Log;
 import android.view.ActionMode;
@@ -27,30 +28,14 @@ import android.view.Window;
 
 class AppCompatDelegateImplV14 extends AppCompatDelegateImplV11 {
 
-    private static final String KEY_LOCAL_NIGHT_MODE = "appcompat:local_night_mode";
-
-    private static TwilightManager sTwilightManager;
+    private TwilightManager mTwilightManager;
+    private boolean mHandleNativeActionModes = true; // defaults to true
 
     @NightMode
-    private int mLocalNightMode = MODE_NIGHT_UNSPECIFIED;
-    private boolean mApplyDayNightCalled;
-
-    private boolean mHandleNativeActionModes = true; // defaults to true
+    private int mNightMode = MODE_NIGHT_AUTO;
 
     AppCompatDelegateImplV14(Context context, Window window, AppCompatCallback callback) {
         super(context, window, callback);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null && mLocalNightMode == MODE_NIGHT_UNSPECIFIED) {
-            // If we have a icicle and we haven't had a local night mode set yet, try and read
-            // it from the icicle
-            mLocalNightMode = savedInstanceState.getInt(KEY_LOCAL_NIGHT_MODE,
-                    MODE_NIGHT_UNSPECIFIED);
-        }
     }
 
     @Override
@@ -71,62 +56,38 @@ class AppCompatDelegateImplV14 extends AppCompatDelegateImplV11 {
     }
 
     @Override
-    public boolean applyDayNight() {
-        mApplyDayNightCalled = true;
-
-        final int modeToApply = mapNightMode(mLocalNightMode == MODE_NIGHT_UNSPECIFIED
-                ? getDefaultNightMode()
-                : mLocalNightMode);
-
-        if (modeToApply != MODE_NIGHT_FOLLOW_SYSTEM) {
-            // If we're not following the system, we many need to update the configuration
-            return updateConfigurationForNightMode(modeToApply);
-        }
-        return false;
-    }
-
-    @Override
-    public void setLocalNightMode(@NightMode final int mode) {
-        switch (mode) {
-            case MODE_NIGHT_AUTO:
-            case MODE_NIGHT_NO:
-            case MODE_NIGHT_YES:
-            case MODE_NIGHT_FOLLOW_SYSTEM:
-                if (mLocalNightMode != mode) {
-                    mLocalNightMode = mode;
-                    if (mApplyDayNightCalled) {
-                        // If we've already applied day night, re-apply since we won't be
-                        // called again
-                        applyDayNight();
-                    }
-                }
-                break;
-            default:
-                Log.d(TAG, "setLocalNightMode() called with an unknown mode");
-                break;
-        }
-    }
-
-    @ApplyableNightMode
-    int mapNightMode(@NightMode final int mode) {
-        switch (mode) {
-            case MODE_NIGHT_AUTO:
-                return getTwilightManager().isNight() ? MODE_NIGHT_YES : MODE_NIGHT_NO;
-            case MODE_NIGHT_UNSPECIFIED:
-                // If we don't have a mode specified, just let the system handle it
-                return MODE_NIGHT_FOLLOW_SYSTEM;
-            default:
-                return mode;
+    public void applyDayNight() {
+        if (!isSystemControllingNightMode()) {
+            // If the system is not controlling night mode, let's do it ourselves
+            switch (mNightMode) {
+                case MODE_NIGHT_AUTO:
+                    // For auto, we need to check whether it's night or not
+                    setDayNightUsingTwilight();
+                    break;
+                default:
+                    // Else, we'll set the value directly
+                    setDayNightConfiguration(mNightMode);
+                    break;
+            }
         }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public void setNightMode(@NightMode int mode) {
+        mNightMode = mode;
+    }
 
-        if (mLocalNightMode != MODE_NIGHT_UNSPECIFIED) {
-            // If we have a local night mode set, save it
-            outState.putInt(KEY_LOCAL_NIGHT_MODE, mLocalNightMode);
+    /**
+     * If possible, updates the Activity's {@link uiMode} to match whether we are at night or not.
+     */
+    void setDayNightUsingTwilight() {
+        // If the system isn't controlling night mode, we'll do it ourselves
+        if (getTwilightManager().isNight()) {
+            // If we're at 'night', set the night mode
+            setDayNightConfiguration(MODE_NIGHT_YES);
+        } else {
+            // Else, set the day mode
+            setDayNightConfiguration(MODE_NIGHT_NO);
         }
     }
 
@@ -134,29 +95,51 @@ class AppCompatDelegateImplV14 extends AppCompatDelegateImplV11 {
      * Updates the {@link Resources} configuration {@code uiMode} with the
      * chosen {@code UI_MODE_NIGHT} value.
      */
-    private boolean updateConfigurationForNightMode(@ApplyableNightMode final int mode) {
+    void setDayNightConfiguration(@NightMode int mode) {
         final Resources res = mContext.getResources();
         final Configuration conf = res.getConfiguration();
         final int currentNightMode = conf.uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
-        final int newNightMode = (mode == MODE_NIGHT_YES)
-                ? Configuration.UI_MODE_NIGHT_YES
-                : Configuration.UI_MODE_NIGHT_NO;
+        int newNightMode = Configuration.UI_MODE_NIGHT_UNDEFINED;
+        switch (mode) {
+            case MODE_NIGHT_NO:
+                newNightMode = Configuration.UI_MODE_NIGHT_NO;
+                break;
+            case MODE_NIGHT_YES:
+                newNightMode = Configuration.UI_MODE_NIGHT_YES;
+                break;
+            case MODE_NIGHT_BLACKOUT:
+                newNightMode = Configuration.UI_MODE_NIGHT_BLACKOUT;
+                break;
+        }
 
         if (currentNightMode != newNightMode) {
-            final Configuration newConf = new Configuration(conf);
-            newConf.uiMode = (newConf.uiMode & ~Configuration.UI_MODE_NIGHT_MASK) | newNightMode;
-            res.updateConfiguration(newConf, null);
-            return true;
+            conf.uiMode = (conf.uiMode & ~Configuration.UI_MODE_NIGHT_MASK) | newNightMode;
+            res.updateConfiguration(conf, res.getDisplayMetrics());
         }
-        return false;
+    }
+
+    /**
+     * Returns true if the system is controlling night mode.
+     */
+    private boolean isSystemControllingNightMode() {
+        final UiModeManager uiModeManager =
+                (UiModeManager) mContext.getSystemService(Context.UI_MODE_SERVICE);
+
+        if (Build.VERSION.SDK_INT < 23
+                && uiModeManager.getCurrentModeType() != Configuration.UI_MODE_TYPE_CAR) {
+            // Night mode only has an effect with car mode enabled on < API v23
+            return false;
+        }
+
+        return uiModeManager.getNightMode() != UiModeManager.MODE_NIGHT_NO;
     }
 
     private TwilightManager getTwilightManager() {
-        if (sTwilightManager == null) {
-            sTwilightManager = new TwilightManager(mContext.getApplicationContext());
+        if (mTwilightManager == null) {
+            mTwilightManager = new TwilightManager(mContext);
         }
-        return sTwilightManager;
+        return mTwilightManager;
     }
 
     class AppCompatWindowCallbackV14 extends AppCompatWindowCallbackBase {
