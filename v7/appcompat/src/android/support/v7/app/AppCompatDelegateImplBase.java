@@ -170,7 +170,7 @@ abstract class AppCompatDelegateImplBase extends AppCompatDelegate {
     abstract boolean onKeyShortcut(int keyCode, KeyEvent event);
 
     @Override
-    public void setNightMode(@NightMode int mode) {
+    public void setLocalNightMode(@NightMode int mode) {
         // no-op
     }
 
@@ -262,8 +262,9 @@ abstract class AppCompatDelegateImplBase extends AppCompatDelegate {
     }
 
     @Override
-    public void applyDayNight() {
+    public boolean applyDayNight() {
         // no-op on v7
+        return false;
     }
 
     final boolean isDestroyed() {
