@@ -136,7 +136,7 @@ public abstract class AppCompatDelegate {
     static final int MODE_NIGHT_UNSPECIFIED = -100;
 
     @NightMode
-    private static int sDefaultNightMode = MODE_NIGHT_YES;
+    private static int sDefaultNightMode = MODE_NIGHT_FOLLOW_SYSTEM;
 
     private static boolean sCompatVectorFromResourcesEnabled = false;
 
