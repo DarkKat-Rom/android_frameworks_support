@@ -91,7 +91,7 @@ public abstract class AppCompatDelegate {
     static final String TAG = "AppCompatDelegate";
 
     /**
-     * Mode which means to not use night mode, and therefore prefer {@code notnight} qualified
+     * Mode which means to always use day mode (Material.Light theme), and therefore prefer {@code notnight} qualified
      * resources where available, regardless of the time.
      *
      * @see #setLocalNightMode(int)
@@ -99,12 +99,36 @@ public abstract class AppCompatDelegate {
     public static final int MODE_NIGHT_NO = 1;
 
     /**
-     * Mode which means to always use night mode, and therefore prefer {@code night} qualified
+     * Mode which means to always use night mode (Material theme), and therefore prefer {@code night} qualified
      * resources where available, regardless of the time.
      *
      * @see #setLocalNightMode(int)
      */
     public static final int MODE_NIGHT_YES = 2;
+
+    /**
+     * Mode which means to always use night mode (DarkKat theme), and therefore prefer {@code darkkat} qualified
+     * resources where available, regardless of the time.
+     *
+     * @see #setLocalNightMode(int)
+     */
+    public static final int MODE_NIGHT_YES_DARKKAT = 3;
+
+    /**
+     * Mode which means to always use day mode (Whiteout theme), and therefore prefer {@code whiteout} qualified
+     * resources where available, regardless of the time.
+     *
+     * @see #setLocalNightMode(int)
+     */
+    public static final int MODE_NIGHT_NO_WHITEOUT = 4;
+
+    /**
+     * Mode which means to always use night mode (Blackout theme), and therefore prefer {@code blackout} qualified
+     * resources where available, regardless of the time.
+     *
+     * @see #setLocalNightMode(int)
+     */
+    public static final int MODE_NIGHT_YES_BLACKOUT = 5;
 
     /**
      * Mode which means to use night mode when it is determined that it is night or not.
@@ -134,12 +158,13 @@ public abstract class AppCompatDelegate {
 
     /** @hide */
     @RestrictTo(GROUP_ID)
-    @IntDef({MODE_NIGHT_NO, MODE_NIGHT_YES, MODE_NIGHT_AUTO, MODE_NIGHT_FOLLOW_SYSTEM,
-            MODE_NIGHT_UNSPECIFIED})
+    @IntDef({MODE_NIGHT_NO, MODE_NIGHT_YES, MODE_NIGHT_YES_DARKKAT, MODE_NIGHT_NO_WHITEOUT,
+            MODE_NIGHT_YES_BLACKOUT, MODE_NIGHT_AUTO, MODE_NIGHT_FOLLOW_SYSTEM, MODE_NIGHT_UNSPECIFIED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface NightMode {}
 
-    @IntDef({MODE_NIGHT_NO, MODE_NIGHT_YES, MODE_NIGHT_FOLLOW_SYSTEM})
+    @IntDef({MODE_NIGHT_NO, MODE_NIGHT_YES, MODE_NIGHT_YES_DARKKAT, MODE_NIGHT_NO_WHITEOUT,
+            MODE_NIGHT_YES_BLACKOUT, MODE_NIGHT_FOLLOW_SYSTEM})
     @Retention(RetentionPolicy.SOURCE)
     @interface ApplyableNightMode {}
 
@@ -473,6 +498,9 @@ public abstract class AppCompatDelegate {
             case MODE_NIGHT_AUTO:
             case MODE_NIGHT_NO:
             case MODE_NIGHT_YES:
+            case MODE_NIGHT_YES_DARKKAT:
+            case MODE_NIGHT_NO_WHITEOUT:
+            case MODE_NIGHT_YES_BLACKOUT:
             case MODE_NIGHT_FOLLOW_SYSTEM:
                 sDefaultNightMode = mode;
                 break;

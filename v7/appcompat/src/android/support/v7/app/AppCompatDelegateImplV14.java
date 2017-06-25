@@ -127,6 +127,9 @@ class AppCompatDelegateImplV14 extends AppCompatDelegateImplV11 {
             case MODE_NIGHT_AUTO:
             case MODE_NIGHT_NO:
             case MODE_NIGHT_YES:
+            case MODE_NIGHT_YES_DARKKAT:
+            case MODE_NIGHT_NO_WHITEOUT:
+            case MODE_NIGHT_YES_BLACKOUT:
             case MODE_NIGHT_FOLLOW_SYSTEM:
                 if (mLocalNightMode != mode) {
                     mLocalNightMode = mode;
@@ -191,9 +194,25 @@ class AppCompatDelegateImplV14 extends AppCompatDelegateImplV11 {
         final Configuration conf = res.getConfiguration();
         final int currentNightMode = conf.uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
-        final int newNightMode = (mode == MODE_NIGHT_YES)
-                ? Configuration.UI_MODE_NIGHT_YES
-                : Configuration.UI_MODE_NIGHT_NO;
+        int newNightMode = Configuration.UI_MODE_NIGHT_UNDEFINED;
+
+         switch (mode) {
+            case MODE_NIGHT_NO:
+                newNightMode = Configuration.UI_MODE_NIGHT_NO;
+                break;
+            case MODE_NIGHT_YES:
+                newNightMode = Configuration.UI_MODE_NIGHT_YES;
+                break;
+            case MODE_NIGHT_YES_DARKKAT:
+                newNightMode = Configuration.UI_MODE_NIGHT_YES_DARKKAT;
+                break;
+            case MODE_NIGHT_NO_WHITEOUT:
+                newNightMode = Configuration.UI_MODE_NIGHT_NO_WHITEOUT;
+                break;
+            case MODE_NIGHT_YES_BLACKOUT:
+                newNightMode = Configuration.UI_MODE_NIGHT_YES_BLACKOUT;
+                break;
+        }
 
         if (currentNightMode != newNightMode) {
             if (shouldRecreateOnNightModeChange()) {
