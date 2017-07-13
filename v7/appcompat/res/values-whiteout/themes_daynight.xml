@@ -17,15 +17,21 @@
 <resources>
 
     <!-- AppCompat theme (day/night vesion) for activities. -->
-    <style name="Theme.AppCompat.DayNight" parent="Theme.AppCompat.Light" />
+    <style name="Theme.AppCompat.DayNight" parent="Theme.AppCompat.Light">
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 
     <!-- Variant of AppCompat.DayNight that has a solid (opaque) action bar
          with an inverse color profile. The dark action bar sharply stands out against
          the light content (when applicable).  -->
-    <style name="Theme.AppCompat.DayNight.DarkActionBar" parent="Theme.AppCompat.Light.DarkActionBar" />
+    <style name="Theme.AppCompat.DayNight.DarkActionBar" parent="Theme.AppCompat.Light">
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 
     <!-- Variant of AppCompat.DayNight with no action bar.  -->
-    <style name="Theme.AppCompat.DayNight.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar" />
+    <style name="Theme.AppCompat.DayNight.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 
     <!-- AppCompat theme (day/night vesion) for dialog windows and activities,
          which is used by the {@code android.support.v7.app.Dialog} class. This changes
