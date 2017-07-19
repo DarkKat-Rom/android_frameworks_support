@@ -30,6 +30,9 @@
     <public type="style" name="Theme.Design.Light.BottomSheetDialog"/>
     <public type="style" name="Theme.Design.Light.NoActionBar"/>
     <public type="style" name="Theme.Design.NoActionBar"/>
+    <public type="style" name="Theme.Design.DayNight"/>
+    <public type="style" name="Theme.Design.DayNight.BottomSheetDialog"/>
+    <public type="style" name="Theme.Design.DayNight.NoActionBar"/>
     <public type="style" name="Widget.Design.AppBarLayout"/>
     <public type="style" name="Widget.Design.BottomSheet.Modal"/>
     <public type="style" name="Widget.Design.CollapsingToolbar"/>
