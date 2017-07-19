@@ -99,7 +99,7 @@ public abstract class AppCompatDelegate {
     public static final int MODE_NIGHT_NO = 1;
 
     /**
-     * Mode which means to Mode which means to always use night mode (Material theme), and therefore prefer {@code night} qualified
+     * Mode which means to always use night mode (Material theme), and therefore prefer {@code night} qualified
      * resources where available, regardless of the time.
      *
      * @see #setLocalNightMode(int)
