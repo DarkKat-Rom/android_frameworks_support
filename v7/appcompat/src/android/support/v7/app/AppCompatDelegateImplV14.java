@@ -128,7 +128,6 @@ class AppCompatDelegateImplV14 extends AppCompatDelegateImplV11 {
             case MODE_NIGHT_NO:
             case MODE_NIGHT_YES:
             case MODE_NIGHT_YES_DARKKAT:
-            case MODE_NIGHT_NO_WHITEOUT:
             case MODE_NIGHT_YES_BLACKOUT:
             case MODE_NIGHT_FOLLOW_SYSTEM:
                 if (mLocalNightMode != mode) {
@@ -205,9 +204,6 @@ class AppCompatDelegateImplV14 extends AppCompatDelegateImplV11 {
                 break;
             case MODE_NIGHT_YES_DARKKAT:
                 newNightMode = Configuration.UI_MODE_NIGHT_YES_DARKKAT;
-                break;
-            case MODE_NIGHT_NO_WHITEOUT:
-                newNightMode = Configuration.UI_MODE_NIGHT_NO_WHITEOUT;
                 break;
             case MODE_NIGHT_YES_BLACKOUT:
                 newNightMode = Configuration.UI_MODE_NIGHT_YES_BLACKOUT;
