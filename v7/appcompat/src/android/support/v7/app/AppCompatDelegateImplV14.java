@@ -87,7 +87,7 @@ class AppCompatDelegateImplV14 extends AppCompatDelegateImplV11 {
     public boolean applyDayNight() {
         boolean applied = false;
 
-        @NightMode final int nightMode = getNightMode();
+        @NightMode final int nightMode = MODE_NIGHT_FOLLOW_SYSTEM;
         @ApplyableNightMode final int modeToApply = mapNightMode(nightMode);
         if (modeToApply != MODE_NIGHT_FOLLOW_SYSTEM) {
             applied = updateForNightMode(modeToApply);
