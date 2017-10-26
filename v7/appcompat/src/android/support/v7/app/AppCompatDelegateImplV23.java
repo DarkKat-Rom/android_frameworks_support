@@ -49,7 +49,7 @@ class AppCompatDelegateImplV23 extends AppCompatDelegateImplV14 {
             // we'll just let the system handle it by returning FOLLOW_SYSTEM
             return MODE_NIGHT_FOLLOW_SYSTEM;
         }
-        return super.mapNightMode(mode);
+        return MODE_NIGHT_FOLLOW_SYSTEM;
     }
 
     class AppCompatWindowCallbackV23 extends AppCompatWindowCallbackV14 {
